@@ -29,8 +29,130 @@
 			<link rel="stylesheet" href="css/animate.min.css">
 			<link rel="stylesheet" href="css/owl.carousel.css">
 			<link rel="stylesheet" href="css/main.css">
+        
+        
+        
+        
+        
+        
+        <script type="text/javascript">
+
+
+// 7 variables to control behavior
+	var Book_Image_Width=673;
+	var Book_Image_Height=350;
+	var Book_Border=true;
+	var Book_Border_Color="gray";
+	var Book_Speed=15;
+	var Book_NextPage_Delay=1500; //1 second=1000
+	var Book_Vertical_Turn=0;	
+
+// array to specify images and optional links. At least 4
+// If Link is not needed keep it ""
+
+	Book_Image_Sources=new Array(
+		"ras1.jpg","ras1.jpg",
+		"ras2.jpg","ras2.jpg",
+		"ras3.jpg","ras3.jpg", //this slide isn't linked
+		"ras4.jpg","ras4.jpg" // NOTE No comma after last line
+		);
+
+/***************** DO NOT EDIT BELOW **********************************/
+	var B_LI,B_MI,B_RI,B_TI,B_Angle=0,B_CrImg=6,B_MaxW,B_Direction=1;
+	var B_MSz,B_Stppd=false;B_Pre_Img=new Array(Book_Image_Sources.length);
+
+	function ImageBook(){
+		if(document.getElementById){
+			for(i=0;i<Book_Image_Sources.length;i+=2){
+				B_Pre_Img[i]=new Image();B_Pre_Img[i].src=Book_Image_Sources[i]}
+			Book_Div=document.getElementById("Book");
+			B_LI=document.createElement("img");Book_Div.appendChild(B_LI);	
+			B_RI=document.createElement("img");Book_Div.appendChild(B_RI);
+			B_MI=document.createElement("img");Book_Div.appendChild(B_MI);	
+			B_LI.style.position=B_MI.style.position=B_RI.style.position="absolute";
+			B_LI.style.zIndex=B_RI.style.zIndex=0;B_MI.style.zIndex=1;
+			B_LI.style.top=(Book_Vertical_Turn?Book_Image_Height+1:0)+"px";
+			B_LI.style.left=0+"px";
+			B_MI.style.top=0+"px";
+			B_MI.style.left=(Book_Vertical_Turn?0:Book_Image_Width+1)+"px";
+			B_RI.style.top=0+"px";
+			B_RI.style.left=(Book_Vertical_Turn?0:Book_Image_Width+1)+"px";
+			B_LI.style.height=Book_Image_Height+"px";
+			B_MI.style.height=Book_Image_Height+"px";
+			B_RI.style.height=Book_Image_Height+"px";
+			B_LI.style.width=Book_Image_Width+"px";
+			B_MI.style.width=Book_Image_Width+"px";
+			B_RI.style.width=Book_Image_Width+"px";
+			if(Book_Border){
+				B_LI.style.borderStyle=B_MI.style.borderStyle=B_RI.style.borderStyle="solid";
+				B_LI.style.borderWidth=1+"px";
+				B_MI.style.borderWidth=1+"px";
+				B_RI.style.borderWidth=1+"px";
+				B_LI.style.borderColor=B_MI.style.borderColor=B_RI.style.borderColor=Book_Border_Color}
+			B_LI.src=B_Pre_Img[0].src;
+			B_LI.lnk=Book_Image_Sources[1];
+			B_MI.src=B_Pre_Img[2].src;
+			B_MI.lnk=Book_Image_Sources[3];
+			B_RI.src=B_Pre_Img[4].src;
+			B_RI.lnk=Book_Image_Sources[5];
+			B_LI.onclick=B_MI.onclick=B_RI.onclick=B_LdLnk;
+			B_LI.onmouseover=B_MI.onmouseover=B_RI.onmouseover=B_Stp;
+			B_LI.onmouseout=B_MI.onmouseout=B_RI.onmouseout=B_Rstrt;
+			BookImages()}}
+
+	function BookImages(){
+		if(!B_Stppd){
+			if(Book_Vertical_Turn){
+				B_MSz=Math.abs(Math.round(Math.cos(B_Angle)*Book_Image_Height));
+				MidOffset=!B_Direction?Book_Image_Height+1:Book_Image_Height-B_MSz;
+				B_MI.style.top=MidOffset+"px";
+				B_MI.style.height=B_MSz+"px"}
+			else{	B_MSz=Math.abs(Math.round(Math.cos(B_Angle)*Book_Image_Width));
+				MidOffset=B_Direction?Book_Image_Width+1:Book_Image_Width-B_MSz;
+				B_MI.style.left=MidOffset+"px";
+				B_MI.style.width=B_MSz+"px"}
+			B_Angle+=Book_Speed/720*Math.PI;
+			if(B_Angle>=Math.PI/2&&B_Direction){
+				B_Direction=0;
+				if(B_CrImg==Book_Image_Sources.length)B_CrImg=0;
+				B_MI.src=B_Pre_Img[B_CrImg].src;
+				B_MI.lnk=Book_Image_Sources[B_CrImg+1];
+				B_CrImg+=2}
+			if(B_Angle>=Math.PI){
+				B_Direction=1;
+				B_TI=B_LI;
+				B_LI=B_MI;
+				B_MI=B_TI;
+				if(Book_Vertical_Turn)B_MI.style.top=0+"px";
+				else B_MI.style.left=Book_Image_Width+1+"px";			
+				B_MI.src=B_RI.src;
+				B_MI.lnk=B_RI.lnk;
+
+				setTimeout("Book_Next_Delay()",Book_NextPage_Delay)}
+			else setTimeout("BookImages()",50)}
+		else setTimeout("BookImages()",50)}
+
+	function Book_Next_Delay(){
+			if(B_CrImg==Book_Image_Sources.length)B_CrImg=0;
+			B_RI.src=B_Pre_Img[B_CrImg].src;
+			B_RI.lnk=Book_Image_Sources[B_CrImg+1];
+			B_MI.style.zIndex=2;
+			B_LI.style.zIndex=1;
+			B_Angle=0;
+			B_CrImg+=2;
+		setTimeout("BookImages()",50)}
+
+	function B_LdLnk(){if(this.lnk)window.location.href=this.lnk}
+	function B_Stp(){B_Stppd=true;this.style.cursor=this.lnk?"pointer":"default"}
+	function B_Rstrt(){B_Stppd=false}
+</script>
+
+        
+        
+        
+        
 		</head>
-		<body>	
+		<body onload="ImageBook()">	
 			  <header id="header" id="home">
 			    <div class="container main-menu">
 			    	<div class="row align-items-center justify-content-between d-flex">
@@ -66,76 +188,7 @@
 			<!-- End banner Area -->
 
 			<!-- Start products Area -->
-			<section class="products-area section-gap">
-				<div class="container">
-					<div class="row d-flex justify-content-center">
-						<div class="col-md-12 pb-40 header-text text-center">
-							<h1 class="pb-10">Featured Robotics Products to Show</h1>
-							<p>
-								Who are in extremely love with eco friendly system.
-							</p>
-						</div>
-					</div>							
-					<div class="row">
-						<div class="col-lg-3 col-md-6">
-							<div class="single-product">
-								<div class="thumb">
-									<img src="img/p1.png" alt="">
-								</div>
-								<div class="details">
-									<h4>The Upper Eye</h4>
-									<p>
-										Who are in extremely love with eco friendly system.
-									</p>
-									<a href="#" class="primary-btn text-uppercase">View Details</a>
-								</div>
-							</div>
-						</div>	
-						<div class="col-lg-3 col-md-6">
-							<div class="single-product">
-								<div class="thumb">
-									<img src="img/p2.png" alt="">
-								</div>
-								<div class="details">
-									<h4>The Crab Wheel</h4>
-									<p>
-										Who are in extremely love with eco friendly system.
-									</p>
-									<a href="#" class="primary-btn text-uppercase">View Details</a>
-								</div>
-							</div>
-						</div>	
-						<div class="col-lg-3 col-md-6">
-							<div class="single-product">
-								<div class="thumb">
-									<img src="img/p3.png" alt="">
-								</div>
-								<div class="details">
-									<h4>The Plug Ninja</h4>
-									<p>
-										Who are in extremely love with eco friendly system.
-									</p>
-									<a href="#" class="primary-btn text-uppercase">View Details</a>
-								</div>
-							</div>
-						</div>	
-						<div class="col-lg-3 col-md-6">
-							<div class="single-product">
-								<div class="thumb">
-									<img src="img/p4.png" alt="">
-								</div>
-								<div class="details">
-									<h4>The Controller</h4>
-									<p>
-										Who are in extremely love with eco friendly system.
-									</p>
-									<a href="#" class="primary-btn text-uppercase">View Details</a>
-								</div>
-							</div>
-						</div>																								
-					</div>
-				</div>	
-			</section>
+			
 			<!-- End products Area -->
 
 			<!-- Start home-about Area -->
@@ -164,30 +217,7 @@
 			
 
 			<!-- Start about-video Area -->
-			<section class="about-video-area section-gap">
-				<div class="container">
-					<div class="row align-items-center">
-						<div class="col-lg-6 about-video-left">
-							<h6 class="text-uppercase">Brand new app to blow your mind</h6>
-							<h1>
-								We’ve made a life <br>
-								that will change you 
-							</h1>
-							<p>
-								<span>We are here to listen from you deliver exellence</span>
-							</p>
-							<p>
-								Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed doeiusmo d tempor incididunt ut labore et dolore magna aliqua.
-							</p>
-							<a class="primary-btn" href="#">Get Started Now</a>
-						</div>
-						<div class="col-lg-6 about-video-right justify-content-center align-items-center d-flex relative">
-							<div class="overlay overlay-bg"></div>
-							<a class="play-btn" href="https://www.youtube.com/watch?v=ARA0AxrnHdM"><img class="img-fluid mx-auto" src="img/play-btn.png" alt=""></a>
-						</div>
-					</div>
-				</div>	
-			</section>
+			
 			<!-- End about-video Area -->
 			
 
@@ -196,158 +226,83 @@
 				<div class="container">
 					<div class="row d-flex justify-content-center">
 						<div class="col-md-12 pb-40 header-text text-center">
-							<h1 class="pb-10 text-white">Some Features that Made us Unique</h1>
-							<p class="text-white">
-								Who are in extremely love with eco friendly system.
-							</p>
+							<h1 class="pb-10 text-white">Panel 2018-19</h1>
+							
 						</div>
 					</div>							
 					<div class="row">
-						<div class="col-lg-4 col-md-6">
-							<div class="single-feature">
-								<a href="#" class="title d-flex flex-row">
-									<span class="lnr lnr-user"></span>
-									<h4>Expert Technicians</h4>
-								</a>
-								<p>
-									Usage of the Internet is becoming more common due to rapid advancement of technology and power.
-								</p>
-							</div>
-						</div>
-						<div class="col-lg-4 col-md-6">
-							<div class="single-feature">
-								<a href="#" class="title d-flex flex-row">
-									<span class="lnr lnr-license"></span>
-									<h4>Professional Service</h4>
-								</a>
-								<p>
-									Usage of the Internet is becoming more common due to rapid advancement of technology and power.
-								</p>
-							</div>
-						</div>
-						<div class="col-lg-4 col-md-6">
-							<div class="single-feature">
-								<a href="#" class="title d-flex flex-row">
-									<span class="lnr lnr-phone"></span>
-									<h4>Great Support</h4>
-								</a>
-								<p>
-									Usage of the Internet is becoming more common due to rapid advancement of technology and power.
-								</p>
-							</div>
-						</div>						
-						<div class="col-lg-4 col-md-6">
-							<div class="single-feature">
-								<a href="#" class="title d-flex flex-row">
-									<span class="lnr lnr-rocket"></span>
-									<h4>Technical Skills</h4>
-								</a>
-								<p>
-									Usage of the Internet is becoming more common due to rapid advancement of technology and power.
-								</p>
-							</div>
-						</div>
-						<div class="col-lg-4 col-md-6">
-							<div class="single-feature">
-								<a href="#" class="title d-flex flex-row">
-									<span class="lnr lnr-diamond"></span>
-									<h4>Highly Recomended</h4>
-								</a>
-								<p>
-									Usage of the Internet is becoming more common due to rapid advancement of technology and power.
-								</p>
-							</div>
-						</div>
-						<div class="col-lg-4 col-md-6">
-							<div class="single-feature">
-								<a href="#" class="title d-flex flex-row">
-									<span class="lnr lnr-bubble"></span>
-									<h4>Positive Reviews</h4>
-								</a>
-								<p>
-									Usage of the Internet is becoming more common due to rapid advancement of technology and power.
-								</p>
-							</div>
-						</div>	
-
+						<div class="lamia-miss">
+                            <h3>Dr. Lamia Iftekhar</h3>
+                            <img src="lamia-mis.png"/>
+                            <h4>Advisor</h4>
+                            <h6>RAS Student Chapter, IEEE NSU SB</h6>
+                        </div>
+                        <div class="lamia-miss">
+                            <h3>Md Tanzil Shahria</h3>
+                            <img src="tanjil.png"/>
+                            <h4>Chair</h4>
+                            <h6>RAS Student Chapter, IEEE NSU SB</h6>
+                        </div>
+                        <div class="lamia-miss">
+                            <h3>Joyeta Saha</h3>
+                            <img src="joyeta-saha.png"/>
+                            <h4>Vice Chair</h4>
+                            <h6>RAS Student Chapter, IEEE NSU SB</h6>
+                        </div>
+                        <div class="col-md-5 col-sm-6">
+                        <div class="rayed">
+                            <h3>Mohammad Rayed</h3>
+                            <img src="rayed.png"/>
+                            <h4>General Secretary</h4>
+                            <h6>RAS Student Chapter, IEEE NSU SB</h6>
+                        </div></div>
+                        <div class="col-md-5 col-sm-6">
+                        <div class="rayed">
+                            <h3>Mohammad Ali Siddique Prio</h3>
+                            <img src="prio.png"/>
+                            <h4>Treasurer</h4>
+                            <h6>RAS Student Chapter, IEEE NSU SB</h6>
+                        </div></div>
 					</div>
 				</div>	
 			</section>
+            
+            <style>
+                .lamia-miss{
+                    padding-left: 444px;
+                    text-align: center;
+                    padding-bottom: 100px;
+                }
+                .lamia-miss>img{
+                    height: 120px;
+                }
+                .rayed{
+                    padding-left: 90px;
+                    text-align: center;
+                    padding-bottom: 100px;
+                }
+                .rayed>img{
+                    height: 120px;
+                }
+                .image_ga h1{
+                    text-align: center;
+                    font-family: monospace;
+                }
+            </style>
 			<!-- End feature Area -->
 			
 
 			<!-- Start brand Area -->
-			<section class="brand-area pt-120">
-				<div class="container">
-					<div class="row align-items-center">
-						<div class="col single-brand">
-							<img class="img-fluid" src="img/l1.png" alt="">
-						</div>
-						<div class="col single-brand">
-							<img class="img-fluid" src="img/l2.png" alt="">
-						</div>
-						<div class="col single-brand">
-							<img class="img-fluid" src="img/l3.png" alt="">
-						</div>
-						<div class="col single-brand">
-							<img class="img-fluid" src="img/l4.png" alt="">
-						</div>
-						<div class="col single-brand">
-							<img class="img-fluid" src="img/l5.png" alt="">
-						</div>
-					</div>
-				</div>	
-			</section>
+			
 			<!-- End brand Area -->
 			
 
 			<!-- Start blog Area -->
-			<section class="blog-area section-gap">
-				<div class="container">
-					<div class="row d-flex justify-content-center">
-						<div class="col-md-12 pb-40 header-text text-center">
-							<h1 class="pb-10">Latest News from our Blog</h1>
-							<p>
-								Who are in extremely love with eco friendly system.
-							</p>
-						</div>
-					</div>						
-					<div class="row">
-						<div class="col-lg-6 col-md-6 blog-left">
-							<div class="thumb">
-								<img class="img-fluid" src="img/b1.jpg" alt="">
-							</div>
-							<div class="detais">
-								<ul class="tags">
-									<li><a href="#">Travel</a></li>
-									<li><a href="#">Life Style</a></li>
-								</ul>
-								<a href="#"><h4>Portable latest Fashion for young women</h4></a>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore  et dolore.
-								</p>
-								<p class="date">31st January, 2018</p>
-							</div>
-						</div>
-						<div class="col-lg-6 col-md-6 blog-right">
-							<div class="thumb">
-								<img class="img-fluid" src="img/b2.jpg" alt="">
-							</div>
-							<div class="detais">
-								<ul class="tags">
-									<li><a href="#">Travel</a></li>
-									<li><a href="#">Life Style</a></li>
-								</ul>
-								<a href="#"><h4>Portable latest Fashion for young women</h4></a>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore  et dolore.
-								</p>
-								<p class="date">31st January, 2018</p>
-							</div>							
-						</div>
-					</div>
-				</div>	
-			</section>
+			<section class="image_ga">
+            <h1>Image Gallery</h1>
+            <div id="Book" style="position:relative">
+<img src="ras1.jpg" width="500" height="350">
+            </section>
 			<!-- End blog Area -->
 			
 			<!-- start footer Area -->		
@@ -365,21 +320,7 @@
 										<h2 style="color: white">follow us :    <a href="https://www.facebook.com/ieeeras.nsu/"><i class="fa fa-facebook"></i></a></h2>
 							</div>
 						</div>
-						<div class="col-lg-3  col-md-12">
-							<div class="single-footer-widget mail-chimp">
-								<h6 class="mb-20">Instragram Feed</h6>
-								<ul class="instafeed d-flex flex-wrap">
-									<li><img src="img/i1.jpg" alt=""></li>
-									<li><img src="img/i2.jpg" alt=""></li>
-									<li><img src="img/i3.jpg" alt=""></li>
-									<li><img src="img/i4.jpg" alt=""></li>
-									<li><img src="img/i5.jpg" alt=""></li>
-									<li><img src="img/i6.jpg" alt=""></li>
-									<li><img src="img/i7.jpg" alt=""></li>
-									<li><img src="img/i8.jpg" alt=""></li>
-								</ul>
-							</div>
-						</div>						
+											
 					</div>
 
 					<div class="row footer-bottom d-flex justify-content-between">
